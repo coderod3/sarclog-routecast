@@ -1,0 +1,62 @@
+{
+    "app": {
+        "title": "RouteCast",
+        "poweredBy": "Sistema RouteCast"
+    },
+    "location": {
+        "origin": "Origen",
+        "destination": "Destino",
+        "selected": "Ubicación seleccionada",
+        "byCoordinates": "Ubicación por coordenadas",
+        "placeholder": {
+            "origin": "ej: São Paulo",
+            "destination": "ej: Curitiba"
+        }
+    },
+    "form": {
+        "date": "Fecha",
+        "time": "Hora",
+        "transportMode": "Modo de Transporte",
+        "analyze": "Analizar Ruta",
+        "newAnalysis": "Nuevo Análisis",
+        "analyzing": "Analizando..."
+    },
+    "map": {
+        "origin": "Origen",
+        "destination": "Destino",
+        "alertLevels": "Niveles de Alerta",
+        "highRisk": "Alto Riesgo",
+        "moderateRisk": "Riesgo Moderado",
+        "lowRisk": "Bajo Riesgo",
+        "noData": "Sin datos de ruta",
+        "fillFormInstructions": "Complete el formulario y haga clic en Analizar Ruta para ver los resultados"
+    },
+    "weather": {
+        "temperature": "Temperatura",
+        "humidity": "Humedad",
+        "precipitation": "Precipitación",
+        "snow": "Nieve",
+        "recommendation": "Recomendación",
+        "absent": "Ausente"
+    },
+    "risk": {
+        "high": "Alto Riesgo",
+        "moderate": "Riesgo Moderado",
+        "low": "Bajo Riesgo",
+        "highDesc": "Condiciones adversas, se necesita precaución adicional",
+        "moderateDesc": "Condiciones aceptables, pero requiere atención",
+        "lowDesc": "Condiciones favorables para viajar"
+    },
+    "loading": {
+        "analyzingRoute": "Analizando Ruta",
+        "mappingInProgress": "Mapeo espacial en progreso...",
+        "completed": "completado",
+        "rocket": "Cohete"
+    },
+    "errors": {
+        "apiError": "Error en la solicitud de la API",
+        "fillAllFields": "Todos los campos deben estar llenos",
+        "futureDateRequired": "La fecha y la hora deben estar en el futuro",
+        "futureTimeRequired": "La fecha y la hora deben estar en el futuro"
+    }
+}

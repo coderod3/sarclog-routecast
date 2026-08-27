@@ -1,0 +1,62 @@
+{
+  "app": {
+    "title": "RouteCast",
+    "poweredBy": "Sistema RouteCast"
+  },
+  "location": {
+    "origin": "Origin",
+    "destination": "Destination",
+    "selected": "Location selected",
+    "byCoordinates": "Location by coordinates",
+    "placeholder": {
+      "origin": "e.g. São Paulo",
+      "destination": "e.g. Curitiba"
+    }
+  },
+  "form": {
+    "date": "Date",
+    "time": "Time",
+    "transportMode": "Transport Mode",
+    "analyze": "Analyze Route",
+    "newAnalysis": "New Analysis",
+    "analyzing": "Analyzing..."
+  },
+  "map": {
+    "origin": "Origin",
+    "destination": "Destination",
+    "alertLevels": "Alert Levels",
+    "highRisk": "High Risk",
+    "moderateRisk": "Moderate Risk",
+    "lowRisk": "Low Risk",
+    "noData": "No route data",
+    "fillFormInstructions": "Fill out the form and click Analyze Route to view results"
+  },
+  "weather": {
+    "temperature": "Temperature",
+    "humidity": "Humidity",
+    "precipitation": "Precipitation",
+    "snow": "Snow",
+    "recommendation": "Recommendation",
+    "absent": "Absent"
+  },
+  "risk": {
+    "high": "High Risk",
+    "moderate": "Moderate Risk",
+    "low": "Low Risk",
+    "highDesc": "Adverse conditions, extra caution needed",
+    "moderateDesc": "Acceptable conditions, but requires attention",
+    "lowDesc": "Favorable travel conditions"
+  },
+  "loading": {
+    "analyzingRoute": "Analyzing Route",
+    "mappingInProgress": "Spatial mapping in progress...",
+    "completed": "completed",
+    "rocket": "Rocket"
+  },
+  "errors": {
+    "apiError": "Error in API request",
+    "fillAllFields": "All fields must be filled in",
+    "futureDateRequired": "Date and time must be in the future",
+    "futureTimeRequired": "Date and time must be in the future"
+  }
+}

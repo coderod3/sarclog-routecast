@@ -1,0 +1,80 @@
+# =========================
+# VARIÁVEIS DE AMBIENTE
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# FRONTEND - React / Vite
+# =========================
+node_modules/
+dist/
+dist-ssr/
+build/
+
+# Logs de gerenciadores de pacotes
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# =========================
+# BACKEND - C# / .NET
+# =========================
+[Bb]in/
+[Oo]bj/
+.vs/
+
+# Configurações locais do Visual Studio
+*.user
+*.userosscache
+*.sln.docstates
+
+# Configurações locais e sensíveis
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.Local.json
+
+# Resultados de testes e cobertura
+TestResults/
+coverage/
+coverage.xml
+coverage.json
+*.coverage
+*.coveragexml
+
+# Publicação do .NET
+publish/
+
+# =========================
+# EDITORES E IDEs
+# =========================
+
+# VS Code: ignora configurações pessoais,
+# mas permite arquivos úteis para a equipe
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# JetBrains
+.idea/
+
+# Arquivos temporários de editores
+*.suo
+*.ntvs*
+*.njsproj
+*.sw?
+*~
+
+# =========================
+# SISTEMAS OPERACIONAIS
+# =========================
+.DS_Store
+Thumbs.db
+Desktop.ini

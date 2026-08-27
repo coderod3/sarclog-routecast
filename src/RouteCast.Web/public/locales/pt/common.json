@@ -1,0 +1,62 @@
+{
+  "app": {
+    "title": "RouteCast",
+    "poweredBy": "Sistema RouteCast"
+  },
+  "location": {
+    "origin": "Origem",
+    "destination": "Destino",
+    "selected": "Localização selecionada",
+    "byCoordinates": "Localização por coordenadas",
+    "placeholder": {
+      "origin": "ex: São Paulo",
+      "destination": "ex: Curitiba"
+    }
+  },
+  "form": {
+    "date": "Data",
+    "time": "Hora",
+    "transportMode": "Modo de Transporte",
+    "analyze": "Analisar Rota",
+    "newAnalysis": "Nova Análise",
+    "analyzing": "Analisando..."
+  },
+  "map": {
+    "origin": "Origem",
+    "destination": "Destino",
+    "alertLevels": "Níveis de Alerta",
+    "highRisk": "Alto Risco",
+    "moderateRisk": "Risco Moderado",
+    "lowRisk": "Baixo Risco",
+    "noData": "Sem dados de rota",
+    "fillFormInstructions": "Preencha o formulário e clique em Analisar Rota para visualizar os resultados"
+  },
+  "weather": {
+    "temperature": "Temperatura",
+    "humidity": "Umidade",
+    "precipitation": "Precipitação",
+    "snow": "Neve",
+    "recommendation": "Recomendação",
+    "absent": "N/A"
+  },
+  "risk": {
+    "high": "Alto Risco",
+    "moderate": "Risco Moderado",
+    "low": "Baixo Risco",
+    "highDesc": "Condições adversas, precaução extra necessária",
+    "moderateDesc": "Condições aceitáveis, mas requer atenção",
+    "lowDesc": "Condições favoráveis para viagem"
+  },
+  "loading": {
+    "analyzingRoute": "Analisando Rota",
+    "mappingInProgress": "Mapeamento espacial em andamento...",
+    "completed": "concluído",
+    "rocket": "Foguete"
+  },
+  "errors": {
+    "apiError": "Ocorreu um erro na requisição da API",
+    "fillAllFields": "Todos os campos devem estar preenchidos",
+    "futureDateRequired": "A data e a hora devem estar no futuro",
+    "futureTimeRequired": "A data e a hora devem estar no futuro"
+  }
+}
