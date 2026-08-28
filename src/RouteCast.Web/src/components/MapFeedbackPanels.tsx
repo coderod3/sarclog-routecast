@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FaInfoCircle, FaShieldAlt, FaExclamationTriangle, FaSkullCrossbones } from 'react-icons/fa';
+import { FaInfoCircle } from 'react-icons/fa';
 import { getRiskSeverityConfig } from '../domain/RiskInterpreter';
 import type { AnalyzeResponse } from '../services/api';
 

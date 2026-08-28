@@ -1,4 +1,4 @@
-import { Car, Bike, PersonStanding, MapPinned, CalendarDays, Timer, Zap, Loader2, Navigation } from "lucide-react";
+import { Car, Bike, PersonStanding, CalendarDays, Timer, Zap, Loader2, Navigation } from "lucide-react";
 import MapView from "../components/MapView";
 import { useState, useEffect } from "react";
 import LocationAutocomplete from "../components/LocationAutocomplete";
