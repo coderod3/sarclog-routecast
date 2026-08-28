@@ -1,0 +1,71 @@
+name: Deploy RouteCast API to Heroku
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "src/RouteCast.Api/**"
+      - ".github/workflows/deploy-api.yml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: routecast-api-production
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build and deploy API
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore dependencies
+        run: dotnet restore src/RouteCast.Api/RouteCast.Api.csproj
+
+      - name: Build API
+        run: dotnet build src/RouteCast.Api/RouteCast.Api.csproj --configuration Release --no-restore
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Extract API from monorepo
+        run: |
+          git subtree split \
+            --prefix src/RouteCast.Api \
+            --branch heroku-deploy
+
+      - name: Deploy to Heroku
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_APP_NAME: sarclog-routecast-api
+        run: |
+          git push \
+            "https://heroku:${HEROKU_API_KEY}@git.heroku.com/${HEROKU_APP_NAME}.git" \
+            heroku-deploy:main \
+            --force
+
+      - name: Verify deployment
+        run: |
+          sleep 10
+          curl \
+            --fail \
+            --silent \
+            --show-error \
+            --request POST \
+            "https://sarclog-routecast-api-6a40c8e81d79.herokuapp.com/api/power/ping"
