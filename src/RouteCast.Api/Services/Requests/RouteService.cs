@@ -1,112 +1,187 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using System.Text.Json;
 using RouteCast.Api.Models.DTOs;
 using RouteCast.Api.Services.Interfaces;
-using System.Text;
-using System.Text.Json;
+using RouteCast.Api.Helpers;
 
-namespace RouteCast.Api.Services.Requests
+namespace RouteCast.Api.Services.Requests;
+
+public class RouteService : IRouteService
 {
-    public class RouteService : IRouteService
+    private readonly HttpClient _httpClient;
+    private readonly string _apiKey;
+
+    public RouteService(
+        HttpClient httpClient,
+        IConfiguration configuration)
     {
-        private readonly HttpClient _httpClient;
-        private readonly string _apiKey;
+        _httpClient = httpClient;
 
-        public RouteService(HttpClient httpClient, IConfiguration configuration)
+        _apiKey = configuration["HereMaps:ApiKey"]
+            ?? throw new InvalidOperationException(
+                "HERE Maps API key não configurada.");
+
+        if (string.IsNullOrWhiteSpace(_apiKey))
         {
-            _httpClient = httpClient;
-
-            _apiKey = configuration["OpenRouteService:ApiKey"]
-                ?? throw new ArgumentNullException("OpenRouteService API key is missing");
-
-            _httpClient.BaseAddress = new Uri("https://api.openrouteservice.org/");
-            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_apiKey}");
+            throw new InvalidOperationException(
+                "HERE Maps API key não configurada.");
         }
 
-        /// <summary>
-        /// Obtém todas as coordenadas (latitude, longitude) da rota entre dois pontos
-        /// </summary>
-        public async Task<MapsData> GetRouteCoordinatesAsync(double latOrigin, double longOrigin, double latDestination, double longDestination, string transportType)
+        _httpClient.BaseAddress =
+            new Uri("https://router.hereapi.com/");
+    }
+
+    public async Task<MapsData> GetRouteCoordinatesAsync(
+        double latOrigin,
+        double longOrigin,
+        double latDestination,
+        double longDestination,
+        string transportType)
+    {
+        var hereTransportMode = MapTransportType(transportType);
+
+        var requestUrl =
+            $"v8/routes" +
+            $"?transportMode={Uri.EscapeDataString(hereTransportMode)}" +
+            $"&origin={latOrigin.ToString(System.Globalization.CultureInfo.InvariantCulture)}," +
+            $"{longOrigin.ToString(System.Globalization.CultureInfo.InvariantCulture)}" +
+            $"&destination={latDestination.ToString(System.Globalization.CultureInfo.InvariantCulture)}," +
+            $"{longDestination.ToString(System.Globalization.CultureInfo.InvariantCulture)}" +
+            $"&return=summary,polyline" +
+            $"&apiKey={Uri.EscapeDataString(_apiKey)}";
+
+        using var response = await _httpClient.GetAsync(requestUrl);
+
+        var responseContent =
+            await response.Content.ReadAsStringAsync();
+
+        if (!response.IsSuccessStatusCode)
         {
-            MapsData mapsData = new MapsData();
-            var coordinates = new List<double[]>
-            {
-                new double[] { longOrigin, latOrigin },
-                new double[] { longDestination, latDestination }
-            };
-
-            // Captura o tipo de transporte (carro, bike, pé)
-            var profile = MapTransportType(transportType);
-
-            var requestBody = new
-            {
-                coordinates,
-                format = "geojson"
-            };
-
-            var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
-            
-            // MUDANÇA 1: A URL agora é dinâmica e usa a variável {profile} em vez de "driving-car" fixo
-            var response = await _httpClient.PostAsync($"v2/directions/{profile}/geojson", content);
-            response.EnsureSuccessStatusCode();
-
-            var json = await response.Content.ReadAsStringAsync();
-            mapsData.json = json;
-
-            var routeResponse = JsonSerializer.Deserialize<RouteResponse>(json, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
-
-            mapsData.Coordinates = ExtractCoordinates(routeResponse);
-            return mapsData;
+            throw new HttpRequestException(
+                $"HERE Routing retornou HTTP {(int)response.StatusCode}: " +
+                responseContent);
         }
 
-        // MUDANÇA 2: Adicionado '?' (RouteResponse?) para resolver o Warning do compilador (CS8604)
-        private List<Coordinate> ExtractCoordinates(RouteResponse? response)
-        {
-            var coordinates = new List<Coordinate>();
-
-            if (response?.Features?.FirstOrDefault()?.Geometry?.Coordinates == null)
-                return coordinates;
-
-            foreach (var coord in response.Features[0].Geometry.Coordinates)
-            {
-                if (coord.Length >= 2)
+        var hereResponse =
+            JsonSerializer.Deserialize<HereRouteResponse>(
+                responseContent,
+                new JsonSerializerOptions
                 {
-                    // ORS retorna [longitude, latitude]
-                    coordinates.Add(new Coordinate(coord[1], coord[0]));
+                    PropertyNameCaseInsensitive = true
+                });
+
+        var sections = hereResponse?
+            .Routes
+            .FirstOrDefault()?
+            .Sections;
+
+        if (sections is null || sections.Count == 0)
+        {
+            throw new InvalidOperationException(
+                "A HERE não retornou uma rota.");
+        }
+
+        var coordinates = new List<Coordinate>();
+
+        foreach (var section in sections)
+        {
+            if (string.IsNullOrWhiteSpace(section.Polyline))
+                continue;
+
+            var decodedCoordinates =
+                FlexiblePolylineDecoder.Decode(section.Polyline);
+
+            foreach (var coordinate in decodedCoordinates)
+            {
+                var isDuplicate =
+                    coordinates.Count > 0 &&
+                    coordinates[^1].Latitude == coordinate.Latitude &&
+                    coordinates[^1].Longitude == coordinate.Longitude;
+
+                if (!isDuplicate)
+                    coordinates.Add(coordinate);
+            }
+        }
+
+        if (coordinates.Count == 0)
+        {
+            throw new InvalidOperationException(
+                "Não foi possível decodificar a geometria da rota.");
+        }
+
+        var geoJson = CreateGeoJson(coordinates);
+
+        return new MapsData
+        {
+            json = geoJson,
+            Coordinates = coordinates
+        };
+    }
+
+    private static string MapTransportType(string transportType)
+    {
+        return transportType.Trim().ToLowerInvariant() switch
+        {
+            "car" => "car",
+            "motorcycle" => "scooter",
+            "bicycle" => "bicycle",
+            "bike" => "bicycle",
+            "walking" => "pedestrian",
+            "foot" => "pedestrian",
+            _ => "car"
+        };
+    }
+
+    private static string CreateGeoJson(
+        IReadOnlyCollection<Coordinate> coordinates)
+    {
+        var geoJson = new
+        {
+            type = "FeatureCollection",
+            features = new[]
+            {
+                new
+                {
+                    type = "Feature",
+                    properties = new { },
+                    geometry = new
+                    {
+                        type = "LineString",
+
+                        // GeoJSON utiliza [longitude, latitude].
+                        coordinates = coordinates.Select(
+                            coordinate => new[]
+                            {
+                                coordinate.Longitude,
+                                coordinate.Latitude
+                            })
+                    }
                 }
             }
+        };
 
-            return coordinates;
-        }
-
-        private string MapTransportType(string transportType)
-        {
-            return transportType.ToLower() switch
-            {
-                "car" => "driving-car",
-                "bike" => "cycling-regular",
-                "foot" => "foot-walking",
-                _ => "driving-car"
-            };
-        }
+        return JsonSerializer.Serialize(geoJson);
     }
+}
 
-    // Classes simples para deserialização
-    public class RouteResponse
-    {
-        public List<Feature> Features { get; set; } = new();
-    }
+public class HereRouteResponse
+{
+    public List<HereRoute> Routes { get; set; } = [];
+}
 
-    public class Feature
-    {
-        public Geometry Geometry { get; set; } = new();
-    }
+public class HereRoute
+{
+    public List<HereSection> Sections { get; set; } = [];
+}
 
-    public class Geometry
-    {
-        public string Type { get; set; } = string.Empty;
-        public List<double[]> Coordinates { get; set; } = new();
-    }
+public class HereSection
+{
+    public string Polyline { get; set; } = string.Empty;
+    public HereSectionSummary? Summary { get; set; }
+}
+
+public class HereSectionSummary
+{
+    public int Duration { get; set; }
+    public int Length { get; set; }
+    public int BaseDuration { get; set; }
 }

@@ -16,7 +16,7 @@ namespace RouteCast.Api.Services
 
         public async Task<AnalyzeResponse> ProcessAsync(AnalyzeDTO model)
         {
-            // 1. Obter a geometria da rota bruta do OpenRouteService (Backend assume controle)
+            // 1. Obter a geometria da rota bruta (Backend assume controle)
             MapsData mapsData = await _routeService.GetRouteCoordinatesAsync(
                 model.LatOrigin,
                 model.LongOrigin,
