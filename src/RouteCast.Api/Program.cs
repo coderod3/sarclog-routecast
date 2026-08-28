@@ -35,7 +35,10 @@ builder.Services.AddControllers()
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("ProductionPolicy", policy =>
-        policy.WithOrigins("http://localhost:5173") // Apenas o frontend local permitido por enquanto
+        policy.WithOrigins(
+                  "http://localhost:5173",
+                  "https://sarclog-routecast.vercel.app"
+              )
               .AllowAnyMethod()
               .AllowAnyHeader());
 });
