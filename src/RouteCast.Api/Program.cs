@@ -5,7 +5,6 @@ using RouteCast.Api.Middlewares;
 using RouteCast.Api.Services;
 using RouteCast.Api.Services.Interfaces;
 using RouteCast.Api.Services.Requests;
-using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,15 +15,27 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.ConfigureJwtAuthentication(builder.Configuration);
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IPowerService, PowerService>();
 
 builder.Services.AddScoped<BaseApiClient>();
 
-builder.Services.AddScoped<IPower, Power>();
+builder.Services.AddScoped<
+    IRouteAnalysisService,
+    RouteAnalysisService>();
+    
+builder.Services.AddScoped<
+    IRouteSamplingService,
+    RouteSamplingService>();
 
+builder.Services.AddScoped<
+    IWeatherRiskService,
+    WeatherRiskService>();
+    
 // Registrar o serviço de rota
-builder.Services.AddHttpClient<RouteService>();
-builder.Services.AddScoped<IRouteService, RouteService>();
+builder.Services.AddHttpClient<IRouteService, RouteService>();
+
+builder.Services.AddHttpClient<
+    IWeatherService,
+    VisualCrossingService>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>

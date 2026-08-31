@@ -1,7 +1,8 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
+using RouteCast.Api.Helpers;
 using RouteCast.Api.Models.DTOs;
 using RouteCast.Api.Services.Interfaces;
-using RouteCast.Api.Helpers;
 
 namespace RouteCast.Api.Services.Requests;
 
@@ -26,11 +27,11 @@ public class RouteService : IRouteService
                 "HERE Maps API key não configurada.");
         }
 
-        _httpClient.BaseAddress =
-            new Uri("https://router.hereapi.com/");
+        _httpClient.BaseAddress = new Uri(
+            "https://router.hereapi.com/");
     }
 
-    public async Task<MapsData> GetRouteCoordinatesAsync(
+    public async Task<RouteGeometryResult> GetRouteCoordinatesAsync(
         double latOrigin,
         double longOrigin,
         double latDestination,
@@ -39,14 +40,20 @@ public class RouteService : IRouteService
     {
         var hereTransportMode = MapTransportType(transportType);
 
+        var origin =
+            $"{latOrigin.ToString(CultureInfo.InvariantCulture)}," +
+            $"{longOrigin.ToString(CultureInfo.InvariantCulture)}";
+
+        var destination =
+            $"{latDestination.ToString(CultureInfo.InvariantCulture)}," +
+            $"{longDestination.ToString(CultureInfo.InvariantCulture)}";
+
         var requestUrl =
-            $"v8/routes" +
+            "v8/routes" +
             $"?transportMode={Uri.EscapeDataString(hereTransportMode)}" +
-            $"&origin={latOrigin.ToString(System.Globalization.CultureInfo.InvariantCulture)}," +
-            $"{longOrigin.ToString(System.Globalization.CultureInfo.InvariantCulture)}" +
-            $"&destination={latDestination.ToString(System.Globalization.CultureInfo.InvariantCulture)}," +
-            $"{longDestination.ToString(System.Globalization.CultureInfo.InvariantCulture)}" +
-            $"&return=summary,polyline" +
+            $"&origin={Uri.EscapeDataString(origin)}" +
+            $"&destination={Uri.EscapeDataString(destination)}" +
+            "&return=summary,polyline" +
             $"&apiKey={Uri.EscapeDataString(_apiKey)}";
 
         using var response = await _httpClient.GetAsync(requestUrl);
@@ -98,7 +105,9 @@ public class RouteService : IRouteService
                     coordinates[^1].Longitude == coordinate.Longitude;
 
                 if (!isDuplicate)
+                {
                     coordinates.Add(coordinate);
+                }
             }
         }
 
@@ -108,12 +117,26 @@ public class RouteService : IRouteService
                 "Não foi possível decodificar a geometria da rota.");
         }
 
+        var distanceMeters = sections.Sum(
+            section => section.Summary?.Length ?? 0);
+
+        var durationSeconds = sections.Sum(
+            section => section.Summary?.Duration ?? 0);
+
+        if (distanceMeters <= 0 || durationSeconds <= 0)
+        {
+            throw new InvalidOperationException(
+                "A HERE retornou distância ou duração inválida.");
+        }
+
         var geoJson = CreateGeoJson(coordinates);
 
-        return new MapsData
+        return new RouteGeometryResult
         {
-            json = geoJson,
-            Coordinates = coordinates
+            GeoJson = geoJson,
+            Coordinates = coordinates,
+            DistanceMeters = distanceMeters,
+            DurationSeconds = durationSeconds
         };
     }
 
@@ -176,12 +199,15 @@ public class HereRoute
 public class HereSection
 {
     public string Polyline { get; set; } = string.Empty;
+
     public HereSectionSummary? Summary { get; set; }
 }
 
 public class HereSectionSummary
 {
     public int Duration { get; set; }
+
     public int Length { get; set; }
+
     public int BaseDuration { get; set; }
 }

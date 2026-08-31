@@ -1,46 +1,123 @@
-import React from 'react';
-import { FaShieldAlt, FaExclamationTriangle, FaSkullCrossbones } from 'react-icons/fa';
+import type { ReactNode } from 'react';
+import {
+  FaExclamationTriangle,
+  FaShieldAlt,
+  FaSkullCrossbones
+} from 'react-icons/fa';
+
+export type RiskLevel = 'Low' | 'Moderate' | 'High';
 
 export interface RiskConfig {
-  icon: React.ReactNode;
+  level: RiskLevel;
+  icon: ReactNode;
+  label: string;
+  description: string;
   textKey: string;
-  colorClass: string;
   descriptionKey: string;
+  colorClass: string;
+  backgroundClass: string;
+  borderClass: string;
+  progressClass: string;
   hexColor: string;
 }
 
-/**
- * Interpreta a nota de risco (Score) do RouteCast e retorna todas as propriedades 
- */
-export const getRiskSeverityConfig = (score: number): RiskConfig => {
-  // Risco Alto (0 a 4)
-  if (score <= 4) {
-    return {
-      icon: <FaSkullCrossbones className="text-red-500 text-xl" />,
-      textKey: 'risk.high',
-      colorClass: 'text-red-500',
-      descriptionKey: 'risk.highDesc',
-      hexColor: '#ef4444'
-    };
+const LOW_RISK_CONFIG: RiskConfig = {
+  level: 'Low',
+  icon: (
+    <FaShieldAlt className="text-xl text-green-500" />
+  ),
+  label: 'Condições favoráveis',
+  description:
+    'O trajeto apresenta baixo risco climático.',
+  textKey: 'risk.low',
+  descriptionKey: 'risk.lowDesc',
+  colorClass: 'text-green-600',
+  backgroundClass: 'bg-green-100',
+  borderClass: 'border-green-500',
+  progressClass: 'bg-green-500',
+  hexColor: '#22c55e'
+};
+
+const MODERATE_RISK_CONFIG: RiskConfig = {
+  level: 'Moderate',
+  icon: (
+    <FaExclamationTriangle className="text-xl text-yellow-500" />
+  ),
+  label: 'Atenção recomendada',
+  description:
+    'O trajeto apresenta risco climático moderado.',
+  textKey: 'risk.moderate',
+  descriptionKey: 'risk.moderateDesc',
+  colorClass: 'text-yellow-600',
+  backgroundClass: 'bg-yellow-100',
+  borderClass: 'border-yellow-500',
+  progressClass: 'bg-yellow-500',
+  hexColor: '#eab308'
+};
+
+const HIGH_RISK_CONFIG: RiskConfig = {
+  level: 'High',
+  icon: (
+    <FaSkullCrossbones className="text-xl text-red-500" />
+  ),
+  label: 'Risco climático alto',
+  description:
+    'O trajeto apresenta condições climáticas potencialmente perigosas.',
+  textKey: 'risk.high',
+  descriptionKey: 'risk.highDesc',
+  colorClass: 'text-red-600',
+  backgroundClass: 'bg-red-100',
+  borderClass: 'border-red-500',
+  progressClass: 'bg-red-500',
+  hexColor: '#ef4444'
+};
+
+export const normalizeRiskScore = (
+  score: number
+): number => {
+  if (!Number.isFinite(score)) {
+    return 0;
   }
-  
-  // Risco Moderado (5 a 7)
-  if (score <= 7) {
-    return {
-      icon: <FaExclamationTriangle className="text-yellow-500 text-xl" />,
-      textKey: 'risk.moderate',
-      colorClass: 'text-yellow-500',
-      descriptionKey: 'risk.moderateDesc',
-      hexColor: '#facc15'
-    };
+
+  return Math.min(10, Math.max(0, score));
+};
+
+export const getRiskLevel = (
+  score: number
+): RiskLevel => {
+  const normalizedScore = normalizeRiskScore(score);
+
+  if (normalizedScore <= 3) {
+    return 'Low';
   }
-  
-  // Risco Baixo (8 a 10)
-  return {
-    icon: <FaShieldAlt className="text-green-500 text-xl" />,
-    textKey: 'risk.low',
-    colorClass: 'text-green-500',
-    descriptionKey: 'risk.lowDesc',
-    hexColor: '#22c55e'
-  };
+
+  if (normalizedScore <= 6) {
+    return 'Moderate';
+  }
+
+  return 'High';
+};
+
+export const getRiskSeverityConfig = (
+  score: number
+): RiskConfig => {
+  const riskLevel = getRiskLevel(score);
+
+  return getRiskSeverityConfigByLevel(riskLevel);
+};
+
+export const getRiskSeverityConfigByLevel = (
+  riskLevel: RiskLevel
+): RiskConfig => {
+  switch (riskLevel) {
+    case 'High':
+      return HIGH_RISK_CONFIG;
+
+    case 'Moderate':
+      return MODERATE_RISK_CONFIG;
+
+    case 'Low':
+    default:
+      return LOW_RISK_CONFIG;
+  }
 };

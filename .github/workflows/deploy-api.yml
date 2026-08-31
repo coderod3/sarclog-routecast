@@ -68,4 +68,4 @@ jobs:
             --silent \
             --show-error \
             --request POST \
-            "https://sarclog-routecast-api-6a40c8e81d79.herokuapp.com/api/power/ping"
+            "https://sarclog-routecast-api-6a40c8e81d79.herokuapp.com/api/route-analysis/ping"

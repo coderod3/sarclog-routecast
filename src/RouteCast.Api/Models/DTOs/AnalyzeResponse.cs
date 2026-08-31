@@ -2,25 +2,22 @@
 {
     public class AnalyzeResponse
     {
-        public List<Segment> Segments { get; set; } = new();
+        public List<RouteRiskSegment> Segments { get; set; } = new();
+
         public int FinalScore { get; set; }
+
+        public string FinalRiskLevel { get; set; } = string.Empty;
+
         public string FinalSummary { get; set; } = string.Empty;
-        public string? Coordinates { get; set; }
-    }
 
-    public class Segment
-    {
-        public int Index { get; set; }
-        public int Score { get; set; }
-        public string Summary { get; set; } = string.Empty;
-        public Indicators Indicators { get; set; } = new();
-    }
+        public string Coordinates { get; set; } = string.Empty;
 
-    public class Indicators
-    {
-        public string Temperature { get; set; } = string.Empty;
-        public string Humidity { get; set; } = string.Empty;
-        public string Precipitation { get; set; } = string.Empty;
-        public bool Snow { get; set; }
+        public int DistanceMeters { get; set; }
+
+        public int DurationSeconds { get; set; }
+
+        public int CoordinateCount { get; set; }
+
+        public int SampleCount { get; set; }
     }
 }

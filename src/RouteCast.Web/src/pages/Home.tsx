@@ -241,7 +241,7 @@ export default function Home() {
               className={`w-full mt-8 py-5 rounded-xl font-bold tracking-widest uppercase text-base transition-all shadow-lg flex items-center justify-center gap-3 overflow-hidden relative
                 ${analyzing && !apiResponse ? 'bg-slate-800 cursor-not-allowed text-slate-500 border border-slate-700' : 
                   apiResponse ? 'bg-slate-900 border-2 border-cyan-400 text-cyan-400 hover:bg-cyan-400/10' : 
-                  'bg-cyan-500 hover: bg-cyan-400 text-slate-900 border border-cyan-300'}`}
+                  'bg-cyan-500 hover:bg-cyan-400 text-slate-900 border border-cyan-300'}`}
             >
               {analyzing && !apiResponse ? (
                 <><Loader2 className="w-6 h-6 animate-spin" /> {t('form.analyzing')}</>
