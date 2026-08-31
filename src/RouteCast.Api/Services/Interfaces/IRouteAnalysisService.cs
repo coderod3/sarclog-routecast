@@ -2,7 +2,7 @@
 
 namespace RouteCast.Api.Services.Interfaces
 {
-    public interface IPower
+    public interface IRouteAnalysisService
     {
         Task<AnalyzeResponse> ProcessAsync(AnalyzeDTO model);
     }
