@@ -26,6 +26,9 @@ export default function Home() {
   const [panelFocused, setPanelFocused] = useState(false);
   const isPanelOpen = !panelCollapsed || panelHovered || panelFocused;
 
+  // A aba só nasce na primeira análise. panelCollapsed entra na conta como trava
+  const showPanelHandle = analyzing || apiResponse !== null || panelCollapsed;
+
   const [origin, setOrigin] = useState<{ name: string; lat: number; lon: number } | null>(null);
   const [destination, setDestination] = useState<{ name: string; lat: number; lon: number } | null>(null);
 
@@ -273,21 +276,23 @@ export default function Home() {
 
         </div>
 
-        {/* ABA LATERAL — clique alterna, hover reabre */}
-        <button
-          type="button"
-          onClick={() => setPanelCollapsed(prev => !prev)}
-          title={isPanelOpen ? t('panel.collapse') : t('panel.expand')}
-          aria-label={isPanelOpen ? t('panel.collapse') : t('panel.expand')}
-          aria-expanded={isPanelOpen}
-          className="mt-2 w-10 shrink-0 flex flex-col items-center gap-3 py-4 rounded-xl bg-slate-900/85 backdrop-blur-xl border border-slate-700/60 text-cyan-400 shadow-lg hover:bg-slate-800/90 hover:border-cyan-400/50 transition-colors"
-        >
-          <Navigation className="w-5 h-5" />
-          <span className="text-[10px] font-bold uppercase tracking-widest [writing-mode:vertical-rl]">
-            {t('panel.label')}
-          </span>
-          {isPanelOpen ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        </button>
+        {/* ABA LATERAL — só existe depois da primeira análise; clique alterna, hover reabre */}
+        {showPanelHandle && (
+          <button
+            type="button"
+            onClick={() => setPanelCollapsed(prev => !prev)}
+            title={isPanelOpen ? t('panel.collapse') : t('panel.expand')}
+            aria-label={isPanelOpen ? t('panel.collapse') : t('panel.expand')}
+            aria-expanded={isPanelOpen}
+            className="mt-2 w-10 shrink-0 flex flex-col items-center gap-3 py-4 rounded-xl bg-slate-900/85 backdrop-blur-xl border border-slate-700/60 text-cyan-400 shadow-lg hover:bg-slate-800/90 hover:border-cyan-400/50 transition-colors"
+          >
+            <Navigation className="w-5 h-5" />
+            <span className="text-[10px] font-bold uppercase tracking-widest [writing-mode:vertical-rl]">
+              {t('panel.label')}
+            </span>
+            {isPanelOpen ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+          </button>
+        )}
       </div>
 
       <style>{`
