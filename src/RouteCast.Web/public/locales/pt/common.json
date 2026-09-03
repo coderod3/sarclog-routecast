@@ -47,6 +47,11 @@
     "moderateDesc": "Condições aceitáveis, mas requer atenção",
     "lowDesc": "Condições favoráveis para viagem"
   },
+  "panel": {
+    "label": "Rota",
+    "expand": "Expandir painel",
+    "collapse": "Recolher painel"
+  },
   "loading": {
     "analyzingRoute": "Analisando Rota",
     "mappingInProgress": "Mapeamento espacial em andamento...",

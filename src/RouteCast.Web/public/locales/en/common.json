@@ -47,6 +47,11 @@
     "moderateDesc": "Acceptable conditions, but requires attention",
     "lowDesc": "Favorable travel conditions"
   },
+  "panel": {
+    "label": "Route",
+    "expand": "Expand panel",
+    "collapse": "Collapse panel"
+  },
   "loading": {
     "analyzingRoute": "Analyzing Route",
     "mappingInProgress": "Spatial mapping in progress...",
