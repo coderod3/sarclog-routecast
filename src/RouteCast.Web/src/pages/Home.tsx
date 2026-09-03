@@ -153,7 +153,7 @@ export default function Home() {
               RouteCast Engine
             </h2>
             <p className="text-sm text-slate-400 mt-2 uppercase tracking-widest">
-              Análise de Risco Climático
+              {t('app.tagline')}
             </p>
           </div>
 
@@ -264,9 +264,9 @@ export default function Home() {
               {analyzing && !apiResponse ? (
                 <><Loader2 className="w-6 h-6 animate-spin" /> {t('form.analyzing')}</>
               ) : apiResponse ? (
-                <><Zap className="w-6 h-6" /> Nova Análise</>
+                <><Zap className="w-6 h-6" /> {t('form.newAnalysis')}</>
               ) : (
-                <><Zap className="w-6 h-6" /> Processar Rota</>
+                <><Zap className="w-6 h-6" /> {t('form.analyze')}</>
               )}
             </button>
           </form>

@@ -1,7 +1,8 @@
 {
   "app": {
     "title": "RouteCast",
-    "poweredBy": "Sistema RouteCast"
+    "poweredBy": "Sistema RouteCast",
+    "tagline": "Weather Risk Analysis"
   },
   "location": {
     "origin": "Origin",
@@ -31,11 +32,34 @@
     "noData": "No route data",
     "fillFormInstructions": "Fill out the form and click Analyze Route to view results"
   },
+  "legend": {
+    "title": "Risk levels",
+    "low": "Low: 0 to 3",
+    "moderate": "Moderate: 4 to 6",
+    "high": "High: 7 to 10"
+  },
+  "summary": {
+    "risk": "risk",
+    "distance": "Distance",
+    "duration": "Duration",
+    "segments": "Segments"
+  },
+  "segment": {
+    "section": "Segment",
+    "to": "to",
+    "estimatedArrival": "Estimated arrival",
+    "forecastUsed": "Forecast used"
+  },
   "weather": {
     "temperature": "Temperature",
     "humidity": "Humidity",
     "precipitation": "Precipitation",
+    "probability": "Probability",
+    "wind": "Wind",
+    "visibility": "Visibility",
     "snow": "Snow",
+    "conditions": "Conditions",
+    "notInformed": "Not reported",
     "recommendation": "Recommendation",
     "absent": "Absent"
   },
@@ -56,10 +80,18 @@
     "analyzingRoute": "Analyzing Route",
     "mappingInProgress": "Spatial mapping in progress...",
     "completed": "completed",
-    "rocket": "Rocket"
+    "rocket": "Rocket",
+    "starting": "Starting route analysis...",
+    "decodingGeometry": "Decoding road geometry...",
+    "slicingWaypoints": "Slicing waypoints...",
+    "syncingWeather": "Syncing weather models...",
+    "rulesEngine": "Running the RouteCast rules engine...",
+    "riskIndexes": "Evaluating cargo risk indexes...",
+    "finished": "Analysis complete!"
   },
   "errors": {
     "apiError": "Error in API request",
+    "noResponse": "The analysis returned no data",
     "fillAllFields": "All fields must be filled in",
     "futureDateRequired": "Date and time must be in the future",
     "futureTimeRequired": "Date and time must be in the future"

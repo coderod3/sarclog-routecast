@@ -1,7 +1,8 @@
 {
   "app": {
     "title": "RouteCast",
-    "poweredBy": "Sistema RouteCast"
+    "poweredBy": "Sistema RouteCast",
+    "tagline": "Análise de Risco Climático"
   },
   "location": {
     "origin": "Origem",
@@ -17,7 +18,7 @@
     "date": "Data",
     "time": "Hora",
     "transportMode": "Modo de Transporte",
-    "analyze": "Analisar Rota",
+    "analyze": "Processar Rota",
     "newAnalysis": "Nova Análise",
     "analyzing": "Analisando..."
   },
@@ -31,11 +32,34 @@
     "noData": "Sem dados de rota",
     "fillFormInstructions": "Preencha o formulário e clique em Analisar Rota para visualizar os resultados"
   },
+  "legend": {
+    "title": "Níveis de risco",
+    "low": "Baixo: 0 a 3",
+    "moderate": "Moderado: 4 a 6",
+    "high": "Alto: 7 a 10"
+  },
+  "summary": {
+    "risk": "risco",
+    "distance": "Distância",
+    "duration": "Duração",
+    "segments": "Trechos"
+  },
+  "segment": {
+    "section": "Trecho",
+    "to": "até",
+    "estimatedArrival": "Chegada estimada",
+    "forecastUsed": "Previsão utilizada"
+  },
   "weather": {
     "temperature": "Temperatura",
     "humidity": "Umidade",
     "precipitation": "Precipitação",
+    "probability": "Probabilidade",
+    "wind": "Vento",
+    "visibility": "Visibilidade",
     "snow": "Neve",
+    "conditions": "Condição",
+    "notInformed": "Não informada",
     "recommendation": "Recomendação",
     "absent": "N/A"
   },
@@ -56,10 +80,18 @@
     "analyzingRoute": "Analisando Rota",
     "mappingInProgress": "Mapeamento espacial em andamento...",
     "completed": "concluído",
-    "rocket": "Foguete"
+    "rocket": "Foguete",
+    "starting": "Iniciando análise de rota...",
+    "decodingGeometry": "Decodificando geometria da via...",
+    "slicingWaypoints": "Calculando fatiamento de waypoints...",
+    "syncingWeather": "Sincronizando modelos climáticos...",
+    "rulesEngine": "Processando motor de regras RouteCast...",
+    "riskIndexes": "Avaliando índices de risco da carga...",
+    "finished": "Análise concluída!"
   },
   "errors": {
     "apiError": "Ocorreu um erro na requisição da API",
+    "noResponse": "A análise não retornou dados",
     "fillAllFields": "Todos os campos devem estar preenchidos",
     "futureDateRequired": "A data e a hora devem estar no futuro",
     "futureTimeRequired": "A data e a hora devem estar no futuro"
