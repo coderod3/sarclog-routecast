@@ -1,8 +1,7 @@
 {
     "app": {
         "title": "RouteCast",
-        "poweredBy": "Sistema RouteCast",
-        "tagline": "Análisis de Riesgo Climático"
+        "poweredBy": "Sistema RouteCast"
     },
     "location": {
         "origin": "Origen",
@@ -32,34 +31,11 @@
         "noData": "Sin datos de ruta",
         "fillFormInstructions": "Complete el formulario y haga clic en Analizar Ruta para ver los resultados"
     },
-    "legend": {
-        "title": "Niveles de riesgo",
-        "low": "Bajo: 0 a 3",
-        "moderate": "Moderado: 4 a 6",
-        "high": "Alto: 7 a 10"
-    },
-    "summary": {
-        "risk": "riesgo",
-        "distance": "Distancia",
-        "duration": "Duración",
-        "segments": "Tramos"
-    },
-    "segment": {
-        "section": "Tramo",
-        "to": "hasta",
-        "estimatedArrival": "Llegada estimada",
-        "forecastUsed": "Pronóstico utilizado"
-    },
     "weather": {
         "temperature": "Temperatura",
         "humidity": "Humedad",
         "precipitation": "Precipitación",
-        "probability": "Probabilidad",
-        "wind": "Viento",
-        "visibility": "Visibilidad",
         "snow": "Nieve",
-        "conditions": "Condición",
-        "notInformed": "No informada",
         "recommendation": "Recomendación",
         "absent": "Ausente"
     },
@@ -71,27 +47,14 @@
         "moderateDesc": "Condiciones aceptables, pero requiere atención",
         "lowDesc": "Condiciones favorables para viajar"
     },
-    "panel": {
-        "label": "Ruta",
-        "expand": "Expandir panel",
-        "collapse": "Contraer panel"
-    },
     "loading": {
         "analyzingRoute": "Analizando Ruta",
         "mappingInProgress": "Mapeo espacial en progreso...",
         "completed": "completado",
-        "rocket": "Cohete",
-        "starting": "Iniciando análisis de ruta...",
-        "decodingGeometry": "Decodificando geometría de la vía...",
-        "slicingWaypoints": "Calculando el fraccionamiento de waypoints...",
-        "syncingWeather": "Sincronizando modelos climáticos...",
-        "rulesEngine": "Procesando el motor de reglas RouteCast...",
-        "riskIndexes": "Evaluando índices de riesgo de la carga...",
-        "finished": "¡Análisis completado!"
+        "rocket": "Cohete"
     },
     "errors": {
         "apiError": "Error en la solicitud de la API",
-        "noResponse": "El análisis no devolvió datos",
         "fillAllFields": "Todos los campos deben estar llenos",
         "futureDateRequired": "La fecha y la hora deben estar en el futuro",
         "futureTimeRequired": "La fecha y la hora deben estar en el futuro"

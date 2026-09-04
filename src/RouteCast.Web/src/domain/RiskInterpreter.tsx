@@ -10,7 +10,8 @@ export type RiskLevel = 'Low' | 'Moderate' | 'High';
 export interface RiskConfig {
   level: RiskLevel;
   icon: ReactNode;
-  // Só as chaves de tradução: o texto vem sempre do locale ativo.
+  label: string;
+  description: string;
   textKey: string;
   descriptionKey: string;
   colorClass: string;
@@ -25,6 +26,9 @@ const LOW_RISK_CONFIG: RiskConfig = {
   icon: (
     <FaShieldAlt className="text-xl text-green-500" />
   ),
+  label: 'Condições favoráveis',
+  description:
+    'O trajeto apresenta baixo risco climático.',
   textKey: 'risk.low',
   descriptionKey: 'risk.lowDesc',
   colorClass: 'text-green-600',
@@ -39,6 +43,9 @@ const MODERATE_RISK_CONFIG: RiskConfig = {
   icon: (
     <FaExclamationTriangle className="text-xl text-yellow-500" />
   ),
+  label: 'Atenção recomendada',
+  description:
+    'O trajeto apresenta risco climático moderado.',
   textKey: 'risk.moderate',
   descriptionKey: 'risk.moderateDesc',
   colorClass: 'text-yellow-600',
@@ -53,6 +60,9 @@ const HIGH_RISK_CONFIG: RiskConfig = {
   icon: (
     <FaSkullCrossbones className="text-xl text-red-500" />
   ),
+  label: 'Risco climático alto',
+  description:
+    'O trajeto apresenta condições climáticas potencialmente perigosas.',
   textKey: 'risk.high',
   descriptionKey: 'risk.highDesc',
   colorClass: 'text-red-600',

@@ -1,5 +1,4 @@
 import { Popup } from 'react-leaflet';
-import { useTranslation } from 'react-i18next';
 import {
   FaCloudRain,
   FaEye,
@@ -20,7 +19,7 @@ const getRiskStyle = (
   switch (riskLevel) {
     case 'High':
       return {
-        labelKey: 'risk.high',
+        label: 'Risco alto',
         textClass: 'text-red-600',
         backgroundClass: 'bg-red-100',
         borderClass: 'border-red-500'
@@ -28,7 +27,7 @@ const getRiskStyle = (
 
     case 'Moderate':
       return {
-        labelKey: 'risk.moderate',
+        label: 'Risco moderado',
         textClass: 'text-yellow-600',
         backgroundClass: 'bg-yellow-100',
         borderClass: 'border-yellow-500'
@@ -37,7 +36,7 @@ const getRiskStyle = (
     case 'Low':
     default:
       return {
-        labelKey: 'risk.low',
+        label: 'Risco baixo',
         textClass: 'text-green-600',
         backgroundClass: 'bg-green-100',
         borderClass: 'border-green-500'
@@ -45,28 +44,14 @@ const getRiskStyle = (
   }
 };
 
-// i18next usa 'pt' | 'en' | 'es'; o Intl precisa do locale completo para
-// acertar o formato de data de cada região.
-const DATE_LOCALES: Record<string, string> = {
-  pt: 'pt-BR',
-  en: 'en-US',
-  es: 'es-ES'
-};
-
-const formatDateTime = (
-  value: string,
-  language: string
-): string => {
+const formatDateTime = (value: string): string => {
   const date = new Date(value);
 
   if (Number.isNaN(date.getTime())) {
     return value;
   }
 
-  const locale =
-    DATE_LOCALES[language.split('-')[0]] ?? 'pt-BR';
-
-  return new Intl.DateTimeFormat(locale, {
+  return new Intl.DateTimeFormat('pt-BR', {
     dateStyle: 'short',
     timeStyle: 'short'
   }).format(date);
@@ -79,8 +64,6 @@ const formatDistance = (meters: number): string => {
 export default function SegmentWeatherPopup({
   segmentData
 }: SegmentWeatherPopupProps) {
-  const { t, i18n } = useTranslation();
-
   const riskStyle = getRiskStyle(
     segmentData.RiskLevel
   );
@@ -97,7 +80,7 @@ export default function SegmentWeatherPopup({
             <span
               className={`rounded-full px-2 py-1 text-xs font-bold ${riskStyle.backgroundClass} ${riskStyle.textClass}`}
             >
-              {t(riskStyle.labelKey)}
+              {riskStyle.label}
             </span>
 
             <span className="text-sm font-bold text-gray-700">
@@ -113,14 +96,14 @@ export default function SegmentWeatherPopup({
         <div className="mb-3 space-y-2 text-sm text-gray-700">
           <div className="flex items-center justify-between gap-4">
             <span className="font-medium">
-              {t('segment.section')}
+              Trecho
             </span>
 
             <span>
               {formatDistance(
                 segmentData.StartDistanceMeters
               )}
-              {' '}{t('segment.to')}{' '}
+              {' até '}
               {formatDistance(
                 segmentData.EndDistanceMeters
               )}
@@ -129,24 +112,23 @@ export default function SegmentWeatherPopup({
 
           <div className="flex items-center justify-between gap-4">
             <span className="font-medium">
-              {t('segment.estimatedArrival')}
+              Chegada estimada
             </span>
 
             <span>
               {formatDateTime(
-                segmentData.EstimatedArrivalTime,
-                i18n.language
+                segmentData.EstimatedArrivalTime
               )}
             </span>
           </div>
 
           <div className="flex items-center justify-between gap-4">
             <span className="font-medium">
-              {t('segment.forecastUsed')}
+              Previsão utilizada
             </span>
 
             <span>
-              {formatDateTime(weather.DateTime, i18n.language)}
+              {formatDateTime(weather.DateTime)}
             </span>
           </div>
         </div>
@@ -155,7 +137,7 @@ export default function SegmentWeatherPopup({
           <div className="flex items-center justify-between gap-4">
             <span className="flex items-center gap-2 text-gray-600">
               <FaTemperatureHigh className="text-red-500" />
-              {t('weather.temperature')}
+              Temperatura
             </span>
 
             <strong className="text-gray-800">
@@ -166,7 +148,7 @@ export default function SegmentWeatherPopup({
           <div className="flex items-center justify-between gap-4">
             <span className="flex items-center gap-2 text-gray-600">
               <FaTint className="text-blue-500" />
-              {t('weather.humidity')}
+              Umidade
             </span>
 
             <strong className="text-gray-800">
@@ -177,7 +159,7 @@ export default function SegmentWeatherPopup({
           <div className="flex items-center justify-between gap-4">
             <span className="flex items-center gap-2 text-gray-600">
               <FaCloudRain className="text-blue-600" />
-              {t('weather.precipitation')}
+              Precipitação
             </span>
 
             <strong className="text-gray-800">
@@ -188,7 +170,7 @@ export default function SegmentWeatherPopup({
           <div className="flex items-center justify-between gap-4">
             <span className="flex items-center gap-2 text-gray-600">
               <FaCloudRain className="text-cyan-600" />
-              {t('weather.probability')}
+              Probabilidade
             </span>
 
             <strong className="text-gray-800">
@@ -199,7 +181,7 @@ export default function SegmentWeatherPopup({
           <div className="flex items-center justify-between gap-4">
             <span className="flex items-center gap-2 text-gray-600">
               <FaWind className="text-slate-500" />
-              {t('weather.wind')}
+              Vento
             </span>
 
             <strong className="text-gray-800">
@@ -210,7 +192,7 @@ export default function SegmentWeatherPopup({
           <div className="flex items-center justify-between gap-4">
             <span className="flex items-center gap-2 text-gray-600">
               <FaEye className="text-gray-500" />
-              {t('weather.visibility')}
+              Visibilidade
             </span>
 
             <strong className="text-gray-800">
@@ -221,7 +203,7 @@ export default function SegmentWeatherPopup({
           <div className="flex items-center justify-between gap-4">
             <span className="flex items-center gap-2 text-gray-600">
               <FaSnowflake className="text-cyan-500" />
-              {t('weather.snow')}
+              Neve
             </span>
 
             <strong className="text-gray-800">
@@ -232,11 +214,11 @@ export default function SegmentWeatherPopup({
 
         <div className="mt-3 border-t border-gray-200 pt-2">
           <p className="text-xs font-medium text-gray-500">
-            {t('weather.conditions')}
+            Condição
           </p>
 
           <p className="text-sm font-semibold text-gray-800">
-            {weather.Conditions || t('weather.notInformed')}
+            {weather.Conditions || 'Não informada'}
           </p>
         </div>
       </div>

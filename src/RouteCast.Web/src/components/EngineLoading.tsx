@@ -8,15 +8,6 @@ interface EngineLoadingProps {
   minDuration?: number;
 }
 
-
-const STATUS_KEYS = [
-  'loading.decodingGeometry',
-  'loading.slicingWaypoints',
-  'loading.syncingWeather',
-  'loading.rulesEngine',
-  'loading.riskIndexes'
-];
-
 const EngineLoading: React.FC<EngineLoadingProps> = ({
   isLoading,
   onLoadingComplete,
@@ -25,7 +16,7 @@ const EngineLoading: React.FC<EngineLoadingProps> = ({
   const { t } = useTranslation('common');
   const [progress, setProgress] = useState(0);
   const [showLoading, setShowLoading] = useState(false);
-  const [statusKey, setStatusKey] = useState('loading.starting');
+  const [statusText, setStatusText] = useState('Iniciando análise de rota...');
 
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval>;
@@ -36,11 +27,19 @@ const EngineLoading: React.FC<EngineLoadingProps> = ({
       setShowLoading(true);
       setProgress(0);
 
+      // Textos de status que mudam para dar sensação de processamento complexo
+      const statusMessages = [
+        'Decodificando geometria da via...',
+        'Calculando fatiamento de waypoints...',
+        'Sincronizando modelos climáticos...',
+        'Processando motor de regras RouteCast...',
+        'Avaliando índices de risco da carga...'
+      ];
       let msgIndex = 0;
 
       statusIntervalId = setInterval(() => {
-        msgIndex = (msgIndex + 1) % STATUS_KEYS.length;
-        setStatusKey(STATUS_KEYS[msgIndex]);
+        msgIndex = (msgIndex + 1) % statusMessages.length;
+        setStatusText(statusMessages[msgIndex]);
       }, 800);
 
       // Progresso suave
@@ -56,7 +55,7 @@ const EngineLoading: React.FC<EngineLoadingProps> = ({
         clearInterval(intervalId);
         clearInterval(statusIntervalId);
         setProgress(100);
-        setStatusKey('loading.finished');
+        setStatusText('Análise concluída!');
         
         setTimeout(() => {
           setShowLoading(false);
@@ -75,7 +74,7 @@ const EngineLoading: React.FC<EngineLoadingProps> = ({
   useEffect(() => {
     if (!isLoading && showLoading) {
       setProgress(100);
-      setStatusKey('loading.finished');
+      setStatusText('Análise concluída!');
       setTimeout(() => {
         setShowLoading(false);
         onLoadingComplete();
@@ -109,7 +108,7 @@ const EngineLoading: React.FC<EngineLoadingProps> = ({
         </h3>
         
         <p className="text-blue-400 text-sm mb-6 h-5 font-medium">
-          {t(statusKey)}
+          {statusText}
         </p>
         
         {/* Barra de progresso */}

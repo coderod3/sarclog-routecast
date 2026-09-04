@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next';
 import type { AnalyzeResponse } from '../services/api';
 import {
   getRiskSeverityConfigByLevel,
@@ -36,9 +35,6 @@ export default function MapFeedbackPanels({
   hasRouteData,
   hasSegments
 }: MapFeedbackPanelsProps) {
-  // O hook precisa vir antes do early return: hooks não podem ser condicionais.
-  const { t } = useTranslation();
-
   if (!apiResponse || !hasRouteData) {
     return null;
   }
@@ -56,14 +52,14 @@ export default function MapFeedbackPanels({
       {hasSegments && (
         <div className="absolute right-4 top-4 z-[999] rounded-lg border border-gray-200 bg-white/90 p-3 shadow-lg backdrop-blur-sm">
           <h3 className="mb-2 border-b border-gray-200 pb-1 text-center text-sm font-bold text-gray-800">
-            {t('legend.title')}
+            Níveis de risco
           </h3>
 
           <div className="mb-2 flex items-center gap-2">
             <span className="h-3.5 w-3.5 rounded-full bg-green-500" />
 
             <span className="text-xs text-gray-700">
-              {t('legend.low')}
+              Baixo: 0 a 3
             </span>
           </div>
 
@@ -71,7 +67,7 @@ export default function MapFeedbackPanels({
             <span className="h-3.5 w-3.5 rounded-full bg-yellow-500" />
 
             <span className="text-xs text-gray-700">
-              {t('legend.moderate')}
+              Moderado: 4 a 6
             </span>
           </div>
 
@@ -79,7 +75,7 @@ export default function MapFeedbackPanels({
             <span className="h-3.5 w-3.5 rounded-full bg-red-500" />
 
             <span className="text-xs text-gray-700">
-              {t('legend.high')}
+              Alto: 7 a 10
             </span>
           </div>
         </div>
@@ -102,7 +98,7 @@ export default function MapFeedbackPanels({
                   <h3
                     className={`text-sm font-bold ${riskConfig.colorClass}`}
                   >
-                    {t(riskConfig.textKey)}
+                    {riskConfig.label}
                   </h3>
 
                   <p className="mt-0.5 text-xs leading-relaxed text-gray-700">
@@ -118,7 +114,7 @@ export default function MapFeedbackPanels({
                   </span>
 
                   <p className="text-[10px] uppercase tracking-wide text-gray-500">
-                    {t('summary.risk')}
+                    risco
                   </p>
                 </div>
               </div>
@@ -135,7 +131,7 @@ export default function MapFeedbackPanels({
               <div className="mt-3 flex divide-x divide-gray-200 border-t border-gray-200 pt-2">
                 <div className="flex-1 px-2 text-center first:pl-0">
                   <p className="text-[9px] uppercase tracking-wide text-gray-500">
-                    {t('summary.distance')}
+                    Distância
                   </p>
 
                   <p className="mt-0.5 text-xs font-bold text-gray-800">
@@ -147,7 +143,7 @@ export default function MapFeedbackPanels({
 
                 <div className="flex-1 px-2 text-center">
                   <p className="text-[9px] uppercase tracking-wide text-gray-500">
-                    {t('summary.duration')}
+                    Duração
                   </p>
 
                   <p className="mt-0.5 text-xs font-bold text-gray-800">
@@ -159,7 +155,7 @@ export default function MapFeedbackPanels({
 
                 <div className="flex-1 px-2 text-center last:pr-0">
                   <p className="text-[9px] uppercase tracking-wide text-gray-500">
-                    {t('summary.segments')}
+                    Trechos
                   </p>
 
                   <p className="mt-0.5 text-xs font-bold text-gray-800">

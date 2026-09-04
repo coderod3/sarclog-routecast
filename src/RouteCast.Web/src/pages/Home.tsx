@@ -1,4 +1,4 @@
-import { Car, Bike, PersonStanding, CalendarDays, Timer, Zap, Loader2, Navigation, ChevronLeft, ChevronRight } from "lucide-react";
+import { Car, Bike, PersonStanding, CalendarDays, Timer, Zap, Loader2, Navigation } from "lucide-react";
 import MapView from "../components/MapView";
 import { useState, useEffect } from "react";
 import LocationAutocomplete from "../components/LocationAutocomplete";
@@ -19,12 +19,6 @@ export default function Home() {
   const [apiResponse, setApiResponse] = useState<AnalyzeResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [resetKey, setResetKey] = useState(0);
-
-  // Painel retrátil: recolhe ao analisar, reabre no hover/foco
-  const [panelCollapsed, setPanelCollapsed] = useState(false);
-  const [panelHovered, setPanelHovered] = useState(false);
-  const [panelFocused, setPanelFocused] = useState(false);
-  const isPanelOpen = !panelCollapsed || panelHovered || panelFocused;
 
   const [origin, setOrigin] = useState<{ name: string; lat: number; lon: number } | null>(null);
   const [destination, setDestination] = useState<{ name: string; lat: number; lon: number } | null>(null);
@@ -61,8 +55,6 @@ export default function Home() {
     }
 
     setAnalyzing(true);
-    setPanelCollapsed(true);
-    setPanelHovered(false);
 
     try {
       setLoading(true);
@@ -112,7 +104,6 @@ export default function Home() {
   const handleReset = () => {
     setApiResponse(null);
     setAnalyzing(false);
-    setPanelCollapsed(false);
     resetForm();
   };
 
@@ -135,17 +126,8 @@ export default function Home() {
       )}
 
       {/* PAINEL FLUTUANTE */}
-      <div
-        className="absolute top-[110px] left-4 md:left-8 z-10 flex items-start gap-2 transition-transform duration-500 ease-in-out"
-        style={{ transform: isPanelOpen ? "translateX(0)" : "translateX(calc(-100% + 3rem))" }}
-        onMouseEnter={() => setPanelHovered(true)}
-        onMouseLeave={() => setPanelHovered(false)}
-        onFocus={() => setPanelFocused(true)}
-        onBlur={(e) => {
-          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPanelFocused(false);
-        }}
-      >
-        <div className="w-[calc(100vw-5rem)] md:w-[440px] max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar bg-slate-900/85 backdrop-blur-xl border border-slate-700/60 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0)] p-8 text-slate-200">
+      <div className="absolute top-[110px] left-4 md:left-8 z-10 w-[95%] md:w-[440px] max-h-[calc(100vh-120px)] overflow-y-auto custom-scrollbar flex flex-col">
+        <div className="bg-slate-900/85 backdrop-blur-xl border border-slate-700/60 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0)] p-8 text-slate-200 flex-grow">
           
           <div className="mb-10 border-b border-slate-700/50 pb-5">
             <h2 className="text-3xl font-bold text-white tracking-tight flex items-center gap-3">
@@ -153,7 +135,7 @@ export default function Home() {
               RouteCast Engine
             </h2>
             <p className="text-sm text-slate-400 mt-2 uppercase tracking-widest">
-              {t('app.tagline')}
+              Análise de Risco Climático
             </p>
           </div>
 
@@ -264,32 +246,16 @@ export default function Home() {
               {analyzing && !apiResponse ? (
                 <><Loader2 className="w-6 h-6 animate-spin" /> {t('form.analyzing')}</>
               ) : apiResponse ? (
-                <><Zap className="w-6 h-6" /> {t('form.newAnalysis')}</>
+                <><Zap className="w-6 h-6" /> Nova Análise</>
               ) : (
-                <><Zap className="w-6 h-6" /> {t('form.analyze')}</>
+                <><Zap className="w-6 h-6" /> Processar Rota</>
               )}
             </button>
           </form>
 
         </div>
-
-        {/* ABA LATERAL — clique alterna, hover reabre */}
-        <button
-          type="button"
-          onClick={() => setPanelCollapsed(prev => !prev)}
-          title={isPanelOpen ? t('panel.collapse') : t('panel.expand')}
-          aria-label={isPanelOpen ? t('panel.collapse') : t('panel.expand')}
-          aria-expanded={isPanelOpen}
-          className="mt-2 w-10 shrink-0 flex flex-col items-center gap-3 py-4 rounded-xl bg-slate-900/85 backdrop-blur-xl border border-slate-700/60 text-cyan-400 shadow-lg hover:bg-slate-800/90 hover:border-cyan-400/50 transition-colors"
-        >
-          <Navigation className="w-5 h-5" />
-          <span className="text-[10px] font-bold uppercase tracking-widest [writing-mode:vertical-rl]">
-            {t('panel.label')}
-          </span>
-          {isPanelOpen ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        </button>
       </div>
-
+      
       <style>{`
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
