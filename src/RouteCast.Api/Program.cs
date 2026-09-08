@@ -8,11 +8,27 @@ using RouteCast.Api.Services.Requests;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDatabaseConfiguration(builder.Configuration);
+/*
+ * Configuração local opcional para desenvolvimento.
+ *
+ * O arquivo appsettings.Local.json não é versionado.
+ * Variáveis de ambiente são adicionadas novamente depois dele
+ * para continuarem tendo prioridade no Heroku e em outros ambientes.
+ */
+builder.Configuration
+    .AddJsonFile(
+        "appsettings.Local.json",
+        optional: true,
+        reloadOnChange: false)
+    .AddEnvironmentVariables();
+
+builder.Services.AddDatabaseConfiguration(
+    builder.Configuration);
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.ConfigureJwtAuthentication(builder.Configuration);
+builder.Services.ConfigureJwtAuthentication(
+    builder.Configuration);
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
@@ -21,7 +37,7 @@ builder.Services.AddScoped<BaseApiClient>();
 builder.Services.AddScoped<
     IRouteAnalysisService,
     RouteAnalysisService>();
-    
+
 builder.Services.AddScoped<
     IRouteSamplingService,
     RouteSamplingService>();
@@ -29,82 +45,106 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     IWeatherRiskService,
     WeatherRiskService>();
-    
-// Registrar o serviço de rota
-builder.Services.AddHttpClient<IRouteService, RouteService>();
+
+builder.Services.AddHttpClient<
+    IRouteService,
+    RouteService>();
 
 builder.Services.AddHttpClient<
     IWeatherService,
     VisualCrossingService>();
 
-builder.Services.AddControllers()
+builder.Services
+    .AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.PropertyNamingPolicy = null;
+        options.JsonSerializerOptions.PropertyNamingPolicy =
+            null;
     });
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("ProductionPolicy", policy =>
-        policy.WithOrigins(
-                  "http://localhost:5173",
-                  "https://sarclog-routecast.vercel.app"
-              )
-              .AllowAnyMethod()
-              .AllowAnyHeader());
+    options.AddPolicy(
+        "ProductionPolicy",
+        policy =>
+        {
+            policy
+                .WithOrigins(
+                    "http://localhost:5173",
+                    "http://localhost:5174",
+                    "http://localhost:5175",
+                    "https://sarclog-routecast.vercel.app")
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
 });
 
-// Configuração do Swaggerr
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+
+builder.Services.AddSwaggerGen(options =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "RouteCast API",
-        Version = "v1",
-        Description = "API para o projeto RouteCast"
-    });
-
-    // Configuração para autenticação JWT no Swagger
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = "JWT Authorization header usando o esquema Bearer. Exemplo: \"Authorization: Bearer {token}\"",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+    options.SwaggerDoc(
+        "v1",
+        new OpenApiInfo
         {
-            new OpenApiSecurityScheme
+            Title = "RouteCast API",
+            Version = "v1",
+            Description = "API para o projeto RouteCast"
+        });
+
+    options.AddSecurityDefinition(
+        "Bearer",
+        new OpenApiSecurityScheme
+        {
+            Description =
+                "JWT Authorization header usando o esquema Bearer. " +
+                "Exemplo: \"Authorization: Bearer {token}\"",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer"
+        });
+
+    options.AddSecurityRequirement(
+        new OpenApiSecurityRequirement
+        {
             {
-                Reference = new OpenApiReference
+                new OpenApiSecurityScheme
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
 });
 
 var app = builder.Build();
 
-var httpContextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();
-CurrentUser.Initialize(httpContextAccessor, app.Services);
+var httpContextAccessor =
+    app.Services.GetRequiredService<IHttpContextAccessor>();
+
+CurrentUser.Initialize(
+    httpContextAccessor,
+    app.Services);
 
 if (app.Environment.IsDevelopment())
 {
-    // Habilitar Swagger
     app.UseSwagger();
-    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "RouteCast API v1"));
+
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint(
+            "/swagger/v1/swagger.json",
+            "RouteCast API v1");
+    });
 }
 
-
-if (!app.Environment.IsDevelopment()){
+if (!app.Environment.IsDevelopment())
+{
     app.UseHttpsRedirection();
 }
 

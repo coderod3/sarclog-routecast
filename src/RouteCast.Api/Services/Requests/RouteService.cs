@@ -27,18 +27,28 @@ public class RouteService : IRouteService
                 "HERE Maps API key não configurada.");
         }
 
-        _httpClient.BaseAddress = new Uri(
-            "https://router.hereapi.com/");
+        var baseUrl = configuration["HereMaps:BaseUrl"];
+
+        if (string.IsNullOrWhiteSpace(baseUrl))
+        {
+            throw new InvalidOperationException(
+                "HereMaps:BaseUrl não configurada.");
+        }
+
+        _httpClient.BaseAddress = new Uri(baseUrl);
+        _httpClient.Timeout = TimeSpan.FromSeconds(30);
     }
 
-    public async Task<RouteGeometryResult> GetRouteCoordinatesAsync(
-        double latOrigin,
-        double longOrigin,
-        double latDestination,
-        double longDestination,
-        string transportType)
+    public async Task<RouteGeometryResult>
+        GetRouteCoordinatesAsync(
+            double latOrigin,
+            double longOrigin,
+            double latDestination,
+            double longDestination,
+            string transportType)
     {
-        var hereTransportMode = MapTransportType(transportType);
+        var hereTransportMode =
+            MapTransportType(transportType);
 
         var origin =
             $"{latOrigin.ToString(CultureInfo.InvariantCulture)}," +
@@ -56,7 +66,8 @@ public class RouteService : IRouteService
             "&return=summary,polyline" +
             $"&apiKey={Uri.EscapeDataString(_apiKey)}";
 
-        using var response = await _httpClient.GetAsync(requestUrl);
+        using var response =
+            await _httpClient.GetAsync(requestUrl);
 
         var responseContent =
             await response.Content.ReadAsStringAsync();
@@ -64,7 +75,8 @@ public class RouteService : IRouteService
         if (!response.IsSuccessStatusCode)
         {
             throw new HttpRequestException(
-                $"HERE Routing retornou HTTP {(int)response.StatusCode}: " +
+                $"HERE Routing retornou HTTP " +
+                $"{(int)response.StatusCode}: " +
                 responseContent);
         }
 
@@ -92,17 +104,22 @@ public class RouteService : IRouteService
         foreach (var section in sections)
         {
             if (string.IsNullOrWhiteSpace(section.Polyline))
+            {
                 continue;
+            }
 
             var decodedCoordinates =
-                FlexiblePolylineDecoder.Decode(section.Polyline);
+                FlexiblePolylineDecoder.Decode(
+                    section.Polyline);
 
             foreach (var coordinate in decodedCoordinates)
             {
                 var isDuplicate =
                     coordinates.Count > 0 &&
-                    coordinates[^1].Latitude == coordinate.Latitude &&
-                    coordinates[^1].Longitude == coordinate.Longitude;
+                    coordinates[^1].Latitude ==
+                    coordinate.Latitude &&
+                    coordinates[^1].Longitude ==
+                    coordinate.Longitude;
 
                 if (!isDuplicate)
                 {
@@ -123,7 +140,8 @@ public class RouteService : IRouteService
         var durationSeconds = sections.Sum(
             section => section.Summary?.Duration ?? 0);
 
-        if (distanceMeters <= 0 || durationSeconds <= 0)
+        if (distanceMeters <= 0 ||
+            durationSeconds <= 0)
         {
             throw new InvalidOperationException(
                 "A HERE retornou distância ou duração inválida.");
@@ -140,9 +158,12 @@ public class RouteService : IRouteService
         };
     }
 
-    private static string MapTransportType(string transportType)
+    private static string MapTransportType(
+        string transportType)
     {
-        return transportType.Trim().ToLowerInvariant() switch
+        return transportType
+            .Trim()
+            .ToLowerInvariant() switch
         {
             "car" => "car",
             "motorcycle" => "scooter",
@@ -169,8 +190,6 @@ public class RouteService : IRouteService
                     geometry = new
                     {
                         type = "LineString",
-
-                        // GeoJSON utiliza [longitude, latitude].
                         coordinates = coordinates.Select(
                             coordinate => new[]
                             {
@@ -198,7 +217,8 @@ public class HereRoute
 
 public class HereSection
 {
-    public string Polyline { get; set; } = string.Empty;
+    public string Polyline { get; set; } =
+        string.Empty;
 
     public HereSectionSummary? Summary { get; set; }
 }
